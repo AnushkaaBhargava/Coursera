@@ -1,6 +1,5 @@
 const mongoose=require("mongoose");
-console.log("Connected to")
-mongoose.connect("mongodb+srv://e23cseu0612_db_user:t4d937e5A5EfIhEO@cluster0.kq7thpe.mongodb.net/Coursera");
+
 const Schema=mongoose.Schema;
 const model=mongoose.model;
 const ObjectId=mongoose.ObjectId;
