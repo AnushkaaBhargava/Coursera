@@ -5,6 +5,8 @@ const {adminRouter}=require('./routes/admin');
 const app=express();
 const mongoose=require("mongoose")
 
+app.use(express.json());
+
 
 app.use("/api/v1/user",userRouter);
 app.use("/api/v1/course",courseRouter);
