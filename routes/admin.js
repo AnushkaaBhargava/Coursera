@@ -3,7 +3,7 @@ const adminRouter=Router();
 const {AdminModel}= require('../db');
 const {z}=require("zod");
 const jwt=require("jsonwebtoken");
-const JWT_SECRET="nushki1205";
+const JWT_ADMIN_PASSWORD="anuaastha1205";
 const bcrypt=require("bcrypt");
 const mongoose=require("mongoose");
 
@@ -77,7 +77,7 @@ adminRouter.post('/signin',async function(req,res){
          if(passwordMatch){
           const token=jwt.sign({
              id:user._id.toString()
-          },JWT_SECRET);
+          },JWT_ADMIN_PASSWORD);
           res.json({
              token:token
           })
