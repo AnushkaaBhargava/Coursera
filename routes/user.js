@@ -1,6 +1,6 @@
 const {Router} = require('express');
 const jwt=require("jsonwebtoken");
-const JWT_USER_PASSWORD="nushki1205";
+const JWT_USER_PASSWORD=require("../config.js");
 const bcrypt=require("bcrypt");
 const {z}=require("zod");
 const userRouter= Router();
@@ -8,6 +8,7 @@ const mongoose=require("mongoose");
 const express=require("express");
 const app=express();
 const { UserModel } = require("../db");
+
 
 app.use(express.json());
 

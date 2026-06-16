@@ -1,11 +1,13 @@
 const {Router}=require("express");
 const adminRouter=Router();
 const {AdminModel}= require('../db');
+const {CourseModel}=require('../db');
 const {z}=require("zod");
 const jwt=require("jsonwebtoken");
-const JWT_ADMIN_PASSWORD="anuaastha1205";
+const JWT_ADMIN_PASSWORD=require("../config.js");
 const bcrypt=require("bcrypt");
 const mongoose=require("mongoose");
+const {adminMiddleware}=require('../middleware/admin');
 
 adminRouter.post('/signup',async function(req,res){
      
@@ -88,22 +90,59 @@ adminRouter.post('/signin',async function(req,res){
          }
 })
 
-adminRouter.post('/course',function(req,res){
+adminRouter.post('/course',adminMiddleware,async function(req,res){
+      const adminId=req.body.userId;
+
+     const {title,description,price,imageUrl}=req.body;
+
+     const course=await CourseModel.create({
+          title,
+          description,
+          price,
+          imageUrl,
+          creatorId:adminId
+     });
+
      res.json({
-        message: "Course created by admin"
+        message:"Course created!",
+        courseId:course._id
      })
 })
 
-adminRouter.put('/course',function(req,res){
-     res.json({
-        message: "Update"
-     })
+adminRouter.put('/course',adminMiddleware,async function(req,res){
+    const adminId=req.body.userId;
+
+    const {newTitle,description,newPrice,imageUrl,courseId}=req.body;
+
+    await UserModel.updateOne({
+        _id:courseId,
+        creatorId:adminId
+    },{
+        title:newTitle,
+        description:description,
+        price:newPrice,
+        imageUrl:imageUrl
+
+    });
+
+    res.json({
+        message:"Course Updated",
+        courseId:course._id
+    });
+    
 })
 
 adminRouter.get('/course/bulk',function(req,res){
-     res.json({
-        message: "Get my courses"
-     })
+      const adminId=req.body.userId;
+
+    const courses=await UserModel.find({
+        creatorId:adminId
+    });
+
+    res.json({
+        message:"Course Updated",
+        courses
+    });
 })
 
 module.exports={
