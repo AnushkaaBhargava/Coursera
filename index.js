@@ -16,7 +16,8 @@ app.use("/api/v1/admin",adminRouter);
 
 async function main(){
     await mongoose.connect(process.env.MONGO_URL);
-    console.log("Listening at port 3000")
+    app.listen(3000, () => {
+        console.log("Listening at port 3000");
+    });
 }
-console.log(process.env.MONGO_URL);
 main();

@@ -8,6 +8,7 @@ const JWT_ADMIN_PASSWORD=require("../config.js");
 const bcrypt=require("bcrypt");
 const mongoose=require("mongoose");
 const {adminMiddleware}=require('../middleware/admin');
+require("dotenv").config();
 
 adminRouter.post('/signup',async function(req,res){
      
@@ -79,7 +80,7 @@ adminRouter.post('/signin',async function(req,res){
          if(passwordMatch){
           const token=jwt.sign({
              id:user._id.toString()
-          },JWT_ADMIN_PASSWORD);
+          },process.env.JWT_ADMIN_PASSWORD);
           res.json({
              token:token
           })
@@ -112,30 +113,30 @@ adminRouter.post('/course',adminMiddleware,async function(req,res){
 adminRouter.put('/course',adminMiddleware,async function(req,res){
     const adminId=req.body.userId;
 
-    const {newTitle,description,newPrice,imageUrl,courseId}=req.body;
+    const {title,description,price,imageUrl,courseId}=req.body;
 
-    await UserModel.updateOne({
+    const course=await CourseModel.updateOne({
         _id:courseId,
         creatorId:adminId
     },{
-        title:newTitle,
+        title:title,
         description:description,
-        price:newPrice,
+        price:price,
         imageUrl:imageUrl
 
     });
 
     res.json({
         message:"Course Updated",
-        courseId:course._id
+        courseId:courseId
     });
     
 })
 
-adminRouter.get('/course/bulk',function(req,res){
+adminRouter.get('/course/bulk',adminMiddleware,async function(req,res){
       const adminId=req.body.userId;
 
-    const courses=await UserModel.find({
+    const courses=await AdminModel.find({
         creatorId:adminId
     });
 
