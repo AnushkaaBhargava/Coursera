@@ -136,7 +136,7 @@ adminRouter.put('/course',adminMiddleware,async function(req,res){
 adminRouter.get('/course/bulk',adminMiddleware,async function(req,res){
       const adminId=req.body.userId;
 
-    const courses=await AdminModel.find({
+    const courses=await CourseModel.find({
         creatorId:adminId
     });
 
