@@ -1,6 +1,5 @@
 const {Router} = require('express');
 const jwt=require("jsonwebtoken");
-const JWT_USER_PASSWORD=require("../config.js");
 const bcrypt=require("bcrypt");
 const {z}=require("zod");
 const userRouter= Router();
@@ -8,7 +7,9 @@ const mongoose=require("mongoose");
 const express=require("express");
 const app=express();
 const { UserModel } = require("../db");
-
+const {PurchaseModel,CourseModel}=require('../db')
+const {userMiddleware}=require('../middleware/user');
+require("dotenv").config();
 
 app.use(express.json());
 
@@ -82,7 +83,7 @@ userRouter.post('/signin',async function(req,res){
      if(passwordMatch){
       const token=jwt.sign({
          id:user._id.toString()
-      },JWT_USER_PASSWORD);
+      },process.env.JWT_USER_PASSWORD);
       res.json({
          token:token
       })
@@ -93,10 +94,25 @@ userRouter.post('/signin',async function(req,res){
      }
 })
 
-userRouter.get('/purchases',function(req,res){
+userRouter.get('/purchases',userMiddleware,async function(req,res){
+   const userId=req.userId;
 
+   const purchases=await PurchaseModel.find({
+    userId:userId
+   });
+
+   const coursesData= await CourseModel.find({
+    _id: {$in : purchases.map(x => x.courseId)}
+   })
+
+   res.json({
+    purchases,
+    coursesData
+   });
 })
 
 module.exports={
    userRouter:userRouter
 }
+
+//"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhMzIzMTBiODM0M2IxZjMwMTEyNjlkNSIsImlhdCI6MTc4MTY3NDcxN30.EmRQMRF0lELqR7CN5U2GJoW3rI65pWXZIFphCeL6FtY"
